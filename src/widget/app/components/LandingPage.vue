@@ -10,10 +10,13 @@
                   class="text-lg-h1 text-md-h2 text-sm-h2 text-h3 white--text"
                   style="overflow-wrap: break-word; word-break: break-word"
                 >
-                  {{ name }}
+                  {{ serviceName }}
                 </v-card-title>
                 <v-card-text class="text-body-1 white--text">
                   {{ description }}
+                  <v-btn small icon v-if="openRepository" :href="openRepository">
+                    <v-icon>mdi-github</v-icon>
+                  </v-btn>
                   <v-card class="mt-6 elevation-12" color="rgb(0, 0, 0, 0.6)">
                     <v-list-item class="px-auto">
                       <v-list-item-content>
@@ -28,7 +31,7 @@
                       class="px-auto"
                     >
                       <v-list-item-content two-line>
-                        <v-list-item-title  class="text-body-1 font-weight-light white--text">
+                        <v-list-item-title class="text-body-1 font-weight-light white--text">
                           {{
                             feature.name
                           }}
@@ -81,7 +84,14 @@
           <v-card class="gradyTwo pa-10 pl-12">
             <v-row>
               <v-col sm="12" md="6" class="pa-12">
-                <v-img :src="second" contain class="mx-auto" />
+                <api-play
+                  :api-key="apiKey"
+                  :endpoints="serviceEndpoints"
+                  :service-api-domain="serviceApiDomain"
+                  :service-root-domain="serviceRootDomain"
+                  :name="serviceName"
+                  :t3chflicks-root-domain="t3chflicksRootDomain"
+                />
               </v-col>
               <v-spacer />
               <v-col sm="12" md="6" class="pa-12">
@@ -95,9 +105,9 @@
                     </v-list-item-content>
                   </v-list-item>
                   <v-list-item
-                  class="mx-auto"
                     v-for="example in examples"
                     :key="example.link"
+                    class="mx-auto"
                     link
                   >
                     <v-list-item-content color="secondary" class="text-body-1 font-weight-light white--text">
@@ -129,10 +139,17 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-row justify="center">
+      <v-row justify="center" v-if="serviceEndpoints">
         <v-col cols="12" class="mx-0 px-0">
           <v-card class="gradyOne pa-10 pl-12">
-            <pricing v-if="endpoints" :endpoints="endpoints" />
+            <pricing :endpoints="serviceEndpoints" />
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row justify="center" v-if="widgetEndpoints">
+        <v-col cols="12" class="mx-0 px-0">
+          <v-card class="gradyTwo pa-10 pl-12">
+            <widgets :endpoints="widgetEndpoints"/>
           </v-card>
         </v-col>
       </v-row>
@@ -143,16 +160,22 @@
 <script>
 import Pricing from './Pricing'
 import FaviconLink from './FaviconLink'
+import ApiPlay from './ApiPlay'
 
 export default {
   components: {
     FaviconLink,
-    Pricing
+    Pricing,
+    ApiPlay
   },
   props: {
-    name: {
+    serviceName: {
       type: String,
       required: true
+    },
+    openRepository: {
+      type: String,
+      required: false
     },
     useLink: {
       type: String,
@@ -174,7 +197,7 @@ export default {
       type: String,
       required: true
     },
-    endpoints: {
+    serviceEndpoints: {
       type: Array,
       required: false
     },
@@ -185,15 +208,31 @@ export default {
     companies: {
       type: Array,
       required: false
+    },
+    serviceApiDomain: {
+      type: String,
+      required: true
+    },
+    t3chflicksRootDomain: {
+      type: String,
+      required: true
+    },
+    serviceRootDomain: {
+      type: String,
+      required: true
+    },
+    apiKey: {
+      type: String,
+      required: false
     }
   },
   head () {
     return {
-      title: this.name,
+      title: this.serviceName,
       meta: [
         {
-          hid: this.name,
-          name: this.name,
+          hid: this.serviceName,
+          name: this.serviceName,
           content: this.description
         }
       ]

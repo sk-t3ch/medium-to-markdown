@@ -2,15 +2,20 @@
   <v-app>
     <v-main>
       <landing-page
-        :name="serviceName"
-        :endpoints="serviceEndpoints"
+        :service-name="serviceName"
+        :service-endpoints="serviceEndpoints"
         :wide="wide"
         :second="second"
         :features="features"
         :examples="examples"
         :use-link="useLink"
         :description="description"
-      />
+        :api-key="apiKey"
+        :service-api-domain="serviceApiDomain"
+        :service-root-domain="serviceRootDomain"
+        :t3chflicks-root-domain="t3chflicksRootDomain"
+        :open-repository="openRepository"
+     />
     </v-main>
   </v-app>
 </template>
@@ -20,9 +25,11 @@ import Vue from 'vue'
 import VueMeta from 'vue-meta'
 import vuetify from '@/plugins/vuetify'
 import serviceConfig from '@/config/service.js'
-
-import 'vue-json-viewer/style.css'
+import JsonViewer from 'vue-json-viewer/ssr'
 import LandingPage from '../components/LandingPage.vue'
+import 'vue-json-viewer/style.css'
+
+Vue.use(JsonViewer)
 Vue.use(VueMeta)
 
 export default {
@@ -37,7 +44,11 @@ export default {
       wide: `${serviceConfig.serviceRootDomain}/branding/coin.png`,
       second: `${serviceConfig.serviceRootDomain}/branding/apiPlay.png`,
       examples: serviceConfig.examples,
-      features: serviceConfig.features
+      features: serviceConfig.features,
+      serviceApiDomain: serviceConfig.serviceApiDomain,
+      serviceRootDomain: serviceConfig.serviceRootDomain,
+      t3chflicksRootDomain: serviceConfig.t3chflicksRootDomain,
+      openRepository: serviceConfig.openRepository
     }
   },
   created () {

@@ -236,18 +236,18 @@ export default {
     if (this.endpoints.length > 0) {
       this.endpoint = this.endpoints[0]
     }
-    const inputSchemaURL = `${this.serviceApiDomain}${this.endpoint.path}?${new URLSearchParams({ schema: 'input' })}`
-    const requestInfo = {
-      method: this.endpoint.method
-    }
-    this.inputSchema = await fetch(inputSchemaURL, requestInfo).then(resp => resp.json())
-    const outputSchemaURL = `${this.serviceApiDomain}${this.endpoint.path}?${new URLSearchParams({ schema: 'output' })}`
-    this.outputSchema = await fetch(outputSchemaURL, requestInfo).then(resp => resp.json())
-    this.reset()
+    await this.reset()
   },
   methods: {
-    reset () {
+    async reset () {
       try {
+        const inputSchemaURL = `${this.serviceApiDomain}${this.endpoint.path}?${new URLSearchParams({ schema: 'input' })}`
+        const requestInfo = {
+          method: this.endpoint.method
+        }
+        this.inputSchema = await fetch(inputSchemaURL, requestInfo).then(resp => resp.json())
+        const outputSchemaURL = `${this.serviceApiDomain}${this.endpoint.path}?${new URLSearchParams({ schema: 'output' })}`
+        this.outputSchema = await fetch(outputSchemaURL, requestInfo).then(resp => resp.json())
         this.isInitialising = true
         this.request = Object.keys(this.inputSchema.properties || {}).reduce(
           (acc, curr) => {

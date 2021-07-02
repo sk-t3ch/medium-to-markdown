@@ -1,13 +1,18 @@
 <template>
   <landing-page
-    :name="serviceName"
-    :endpoints="serviceEndpoints"
+    :service-name="serviceName"
+    :service-endpoints="serviceEndpoints"
     :wide="wide"
     :second="second"
     :features="features"
     :examples="examples"
     :use-link="useLink"
     :description="description"
+    :api-key="apiKey"
+    :service-api-domain="serviceApiDomain"
+    :service-root-domain="serviceRootDomain"
+    :t3chflicks-root-domain="t3chflicksRootDomain"
+    :open-repository="openRepository"
   />
 </template>
 
@@ -28,7 +33,12 @@ export default {
       wide: `${serviceConfig.serviceRootDomain}/branding/coin.png`,
       second: `${serviceConfig.serviceRootDomain}/branding/apiPlay.png`,
       examples: serviceConfig.examples,
-      features: serviceConfig.features
+      features: serviceConfig.features,
+      serviceApiDomain: serviceConfig.serviceApiDomain,
+      serviceRootDomain: serviceConfig.serviceRootDomain,
+      t3chflicksRootDomain: serviceConfig.t3chflicksRootDomain,
+      openRepository: serviceConfig.openRepository,
+      apiKey: 'abc123'
     }
   }
 }

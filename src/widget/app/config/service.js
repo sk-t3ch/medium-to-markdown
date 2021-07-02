@@ -4,6 +4,7 @@ export default {
   serviceApiDomain: `https://${process.env.serviceApiDomain}`,
   name: 'Medium To MarkDown',
   slug: 'medium-to-markdown',
+  openRepository: 'https://github.com/sk-t3ch/medium-to-markdown',
   endpoints: [
     {
       path: '/convert',
