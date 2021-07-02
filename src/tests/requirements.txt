@@ -1,0 +1,5 @@
+requests==2.24.0
+boto3==1.13.24
+botocore==1.16.24
+pytest==6.2.2
+fastjsonschema

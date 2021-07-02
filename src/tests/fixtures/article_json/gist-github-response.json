@@ -1,0 +1,264 @@
+{
+  "url": "https://api.github.com/gists/ad5965d4a5bbc17448c0f16405fe3018",
+  "forks_url": "https://api.github.com/gists/ad5965d4a5bbc17448c0f16405fe3018/forks",
+  "commits_url": "https://api.github.com/gists/ad5965d4a5bbc17448c0f16405fe3018/commits",
+  "id": "ad5965d4a5bbc17448c0f16405fe3018",
+  "node_id": "MDQ6R2lzdGFkNTk2NWQ0YTViYmMxNzQ0OGMwZjE2NDA1ZmUzMDE4",
+  "git_pull_url": "https://gist.github.com/ad5965d4a5bbc17448c0f16405fe3018.git",
+  "git_push_url": "https://gist.github.com/ad5965d4a5bbc17448c0f16405fe3018.git",
+  "html_url": "https://gist.github.com/ad5965d4a5bbc17448c0f16405fe3018",
+  "files": {
+    "User_Management-Cognito_User_Pool.yml": {
+      "filename": "User_Management-Cognito_User_Pool.yml",
+      "type": "text/x-yaml",
+      "language": "YAML",
+      "raw_url": "https://gist.githubusercontent.com/sk-t3ch/ad5965d4a5bbc17448c0f16405fe3018/raw/33b5bf317d737638ddf20b2d1217cd2faff45a22/User_Management-Cognito_User_Pool.yml",
+      "size": 605,
+      "truncated": false,
+      "content": "  CognitoUserPoolClient:\n    Type: AWS::Cognito::UserPoolClient\n    Properties:\n      ClientName: CognitoUserPoolClient\n      UserPoolId: !Ref CognitoUserPool\n      AllowedOAuthFlows:\n      - implicit\n      AllowedOAuthFlowsUserPoolClient: true\n      AllowedOAuthScopes:\n      - email\n      - openid\n      LogoutURLs:\n      - !Sub \n        - https://um-app.${ Domain }\n        - Domain: !ImportValue UserManagerApp-RootDomain\n      CallbackURLs:\n      - !Sub \n        - https://um-app.${ Domain }\n        - Domain: !ImportValue UserManagerApp-RootDomain\n      SupportedIdentityProviders:\n      - COGNITO  "
+    }
+  },
+  "public": true,
+  "created_at": "2020-06-10T19:44:46Z",
+  "updated_at": "2020-09-02T21:56:50Z",
+  "description": "User Management SAM - Cognito User Pool",
+  "comments": 0,
+  "user": null,
+  "comments_url": "https://api.github.com/gists/ad5965d4a5bbc17448c0f16405fe3018/comments",
+  "owner": {
+    "login": "sk-t3ch",
+    "id": 25009814,
+    "node_id": "MDQ6VXNlcjI1MDA5ODE0",
+    "avatar_url": "https://avatars0.githubusercontent.com/u/25009814?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/sk-t3ch",
+    "html_url": "https://github.com/sk-t3ch",
+    "followers_url": "https://api.github.com/users/sk-t3ch/followers",
+    "following_url": "https://api.github.com/users/sk-t3ch/following{/other_user}",
+    "gists_url": "https://api.github.com/users/sk-t3ch/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/sk-t3ch/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/sk-t3ch/subscriptions",
+    "organizations_url": "https://api.github.com/users/sk-t3ch/orgs",
+    "repos_url": "https://api.github.com/users/sk-t3ch/repos",
+    "events_url": "https://api.github.com/users/sk-t3ch/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/sk-t3ch/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "forks": [
+
+  ],
+  "history": [
+    {
+      "user": {
+        "login": "sk-t3ch",
+        "id": 25009814,
+        "node_id": "MDQ6VXNlcjI1MDA5ODE0",
+        "avatar_url": "https://avatars0.githubusercontent.com/u/25009814?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/sk-t3ch",
+        "html_url": "https://github.com/sk-t3ch",
+        "followers_url": "https://api.github.com/users/sk-t3ch/followers",
+        "following_url": "https://api.github.com/users/sk-t3ch/following{/other_user}",
+        "gists_url": "https://api.github.com/users/sk-t3ch/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/sk-t3ch/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/sk-t3ch/subscriptions",
+        "organizations_url": "https://api.github.com/users/sk-t3ch/orgs",
+        "repos_url": "https://api.github.com/users/sk-t3ch/repos",
+        "events_url": "https://api.github.com/users/sk-t3ch/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/sk-t3ch/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "e1035193cb787683eae174a1b45a27b90bea46fb",
+      "committed_at": "2020-09-02T21:56:50Z",
+      "change_status": {
+        "total": 42,
+        "additions": 20,
+        "deletions": 22
+      },
+      "url": "https://api.github.com/gists/ad5965d4a5bbc17448c0f16405fe3018/e1035193cb787683eae174a1b45a27b90bea46fb"
+    },
+    {
+      "user": {
+        "login": "sk-t3ch",
+        "id": 25009814,
+        "node_id": "MDQ6VXNlcjI1MDA5ODE0",
+        "avatar_url": "https://avatars0.githubusercontent.com/u/25009814?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/sk-t3ch",
+        "html_url": "https://github.com/sk-t3ch",
+        "followers_url": "https://api.github.com/users/sk-t3ch/followers",
+        "following_url": "https://api.github.com/users/sk-t3ch/following{/other_user}",
+        "gists_url": "https://api.github.com/users/sk-t3ch/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/sk-t3ch/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/sk-t3ch/subscriptions",
+        "organizations_url": "https://api.github.com/users/sk-t3ch/orgs",
+        "repos_url": "https://api.github.com/users/sk-t3ch/repos",
+        "events_url": "https://api.github.com/users/sk-t3ch/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/sk-t3ch/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "ddd78b3a798f7b877b8c891c84fded857d25f2c3",
+      "committed_at": "2020-06-15T09:15:01Z",
+      "change_status": {
+        "total": 4,
+        "additions": 1,
+        "deletions": 3
+      },
+      "url": "https://api.github.com/gists/ad5965d4a5bbc17448c0f16405fe3018/ddd78b3a798f7b877b8c891c84fded857d25f2c3"
+    },
+    {
+      "user": {
+        "login": "sk-t3ch",
+        "id": 25009814,
+        "node_id": "MDQ6VXNlcjI1MDA5ODE0",
+        "avatar_url": "https://avatars0.githubusercontent.com/u/25009814?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/sk-t3ch",
+        "html_url": "https://github.com/sk-t3ch",
+        "followers_url": "https://api.github.com/users/sk-t3ch/followers",
+        "following_url": "https://api.github.com/users/sk-t3ch/following{/other_user}",
+        "gists_url": "https://api.github.com/users/sk-t3ch/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/sk-t3ch/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/sk-t3ch/subscriptions",
+        "organizations_url": "https://api.github.com/users/sk-t3ch/orgs",
+        "repos_url": "https://api.github.com/users/sk-t3ch/repos",
+        "events_url": "https://api.github.com/users/sk-t3ch/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/sk-t3ch/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "e73819b2cb64c43a533601683cea9572fb1795fa",
+      "committed_at": "2020-06-15T08:56:57Z",
+      "change_status": {
+        "total": 25,
+        "additions": 2,
+        "deletions": 23
+      },
+      "url": "https://api.github.com/gists/ad5965d4a5bbc17448c0f16405fe3018/e73819b2cb64c43a533601683cea9572fb1795fa"
+    },
+    {
+      "user": {
+        "login": "sk-t3ch",
+        "id": 25009814,
+        "node_id": "MDQ6VXNlcjI1MDA5ODE0",
+        "avatar_url": "https://avatars0.githubusercontent.com/u/25009814?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/sk-t3ch",
+        "html_url": "https://github.com/sk-t3ch",
+        "followers_url": "https://api.github.com/users/sk-t3ch/followers",
+        "following_url": "https://api.github.com/users/sk-t3ch/following{/other_user}",
+        "gists_url": "https://api.github.com/users/sk-t3ch/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/sk-t3ch/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/sk-t3ch/subscriptions",
+        "organizations_url": "https://api.github.com/users/sk-t3ch/orgs",
+        "repos_url": "https://api.github.com/users/sk-t3ch/repos",
+        "events_url": "https://api.github.com/users/sk-t3ch/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/sk-t3ch/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "8feb538f0a044987ea4277c2824368f6f2d64579",
+      "committed_at": "2020-06-15T08:56:41Z",
+      "change_status": {
+        "total": 0,
+        "additions": 0,
+        "deletions": 0
+      },
+      "url": "https://api.github.com/gists/ad5965d4a5bbc17448c0f16405fe3018/8feb538f0a044987ea4277c2824368f6f2d64579"
+    },
+    {
+      "user": {
+        "login": "sk-t3ch",
+        "id": 25009814,
+        "node_id": "MDQ6VXNlcjI1MDA5ODE0",
+        "avatar_url": "https://avatars0.githubusercontent.com/u/25009814?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/sk-t3ch",
+        "html_url": "https://github.com/sk-t3ch",
+        "followers_url": "https://api.github.com/users/sk-t3ch/followers",
+        "following_url": "https://api.github.com/users/sk-t3ch/following{/other_user}",
+        "gists_url": "https://api.github.com/users/sk-t3ch/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/sk-t3ch/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/sk-t3ch/subscriptions",
+        "organizations_url": "https://api.github.com/users/sk-t3ch/orgs",
+        "repos_url": "https://api.github.com/users/sk-t3ch/repos",
+        "events_url": "https://api.github.com/users/sk-t3ch/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/sk-t3ch/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "46498f703fb9ec0272fc72bc501e2b48586224cf",
+      "committed_at": "2020-06-14T18:02:29Z",
+      "change_status": {
+        "total": 0,
+        "additions": 0,
+        "deletions": 0
+      },
+      "url": "https://api.github.com/gists/ad5965d4a5bbc17448c0f16405fe3018/46498f703fb9ec0272fc72bc501e2b48586224cf"
+    },
+    {
+      "user": {
+        "login": "sk-t3ch",
+        "id": 25009814,
+        "node_id": "MDQ6VXNlcjI1MDA5ODE0",
+        "avatar_url": "https://avatars0.githubusercontent.com/u/25009814?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/sk-t3ch",
+        "html_url": "https://github.com/sk-t3ch",
+        "followers_url": "https://api.github.com/users/sk-t3ch/followers",
+        "following_url": "https://api.github.com/users/sk-t3ch/following{/other_user}",
+        "gists_url": "https://api.github.com/users/sk-t3ch/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/sk-t3ch/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/sk-t3ch/subscriptions",
+        "organizations_url": "https://api.github.com/users/sk-t3ch/orgs",
+        "repos_url": "https://api.github.com/users/sk-t3ch/repos",
+        "events_url": "https://api.github.com/users/sk-t3ch/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/sk-t3ch/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "7b9647c25b16ee1c8e213dc62105ac8de5246ac0",
+      "committed_at": "2020-06-14T18:01:48Z",
+      "change_status": {
+        "total": 18,
+        "additions": 7,
+        "deletions": 11
+      },
+      "url": "https://api.github.com/gists/ad5965d4a5bbc17448c0f16405fe3018/7b9647c25b16ee1c8e213dc62105ac8de5246ac0"
+    },
+    {
+      "user": {
+        "login": "sk-t3ch",
+        "id": 25009814,
+        "node_id": "MDQ6VXNlcjI1MDA5ODE0",
+        "avatar_url": "https://avatars0.githubusercontent.com/u/25009814?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/sk-t3ch",
+        "html_url": "https://github.com/sk-t3ch",
+        "followers_url": "https://api.github.com/users/sk-t3ch/followers",
+        "following_url": "https://api.github.com/users/sk-t3ch/following{/other_user}",
+        "gists_url": "https://api.github.com/users/sk-t3ch/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/sk-t3ch/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/sk-t3ch/subscriptions",
+        "organizations_url": "https://api.github.com/users/sk-t3ch/orgs",
+        "repos_url": "https://api.github.com/users/sk-t3ch/repos",
+        "events_url": "https://api.github.com/users/sk-t3ch/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/sk-t3ch/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "e04b785830d32cd0c9a159131d91e5a252ad0510",
+      "committed_at": "2020-06-10T19:44:46Z",
+      "change_status": {
+        "total": 50,
+        "additions": 50,
+        "deletions": 0
+      },
+      "url": "https://api.github.com/gists/ad5965d4a5bbc17448c0f16405fe3018/e04b785830d32cd0c9a159131d91e5a252ad0510"
+    }
+  ],
+  "truncated": false
+}

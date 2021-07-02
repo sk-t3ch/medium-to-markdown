@@ -1,0 +1,18 @@
+{
+  "mediaResourceId": "99302f9cb97169113a42a4da107a3188",
+  "mediaResourceType": "MediaResourceExternalLink",
+  "href": "https://www.youtube.com/watch?v=rkmM_F-sD38",
+  "domain": "www.youtube.com",
+  "title": "What's In Our Home Lab?",
+  "description": "Hi everyone, we'll be sharing some of our tips for setting up and organising your own home lab. Blog Post: https://www.instructables.com/id/Home-Lab-Whats-in...",
+  "iframeWidth": 854,
+  "iframeHeight": 480,
+  "iframeSrc": "https://cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fwww.youtube.com%2Fembed%2FrkmM_F-sD38%3Ffeature%3Doembed&display_name=YouTube&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DrkmM_F-sD38&image=https%3A%2F%2Fi.ytimg.com%2Fvi%2FrkmM_F-sD38%2Fhqdefault.jpg&key=a19fcc184b9711e1b4764040d3dc5c07&type=text%2Fhtml&schema=youtube",
+  "thumbnailUrl": "https://i.embed.ly/1/image?url=https%3A%2F%2Fi.ytimg.com%2Fvi%2FrkmM_F-sD38%2Fhqdefault.jpg&key=a19fcc184b9711e1b4764040d3dc5c07",
+  "thumbnailWidth": 480,
+  "thumbnailHeight": 360,
+  "display": 2,
+  "thumbnailImageId": "",
+  "authorName": "T3ch Flicks",
+  "type": "MediaResource"
+}

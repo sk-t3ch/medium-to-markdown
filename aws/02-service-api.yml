@@ -1,0 +1,252 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  CommitHash:
+    Type: String
+  ProjectName:
+    Type: String
+  DockerRepo:
+    Type: String
+
+Resources:
+  ProcessingQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 60
+      MessageRetentionPeriod: 60
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+
+
+  ProcessingEventSourceMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      BatchSize: 1
+      Enabled: true
+      EventSourceArn: !GetAtt ProcessingQueue.Arn
+      FunctionName: !GetAtt ProcessingLambdaFunction.Arn
+
+
+  ListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Actions:
+        - TargetGroupArn: !Ref LoadBalancerTargetGroup
+          Type: forward
+      Conditions:
+        - Field: path-pattern
+          PathPatternConfig:
+            Values:
+            - /medium-to-markdown/convert
+      ListenerArn: !ImportValue T3chFlicksAPI-LoadBalancerListenerArn
+      Priority: 1     
+
+      
+  LoadBalancerTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      TargetType: lambda
+      Targets:
+        - AvailabilityZone: all
+          Id: !GetAtt APILambdaFunction.Arn
+
+
+  APILambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+      MemorySize: 256
+      Timeout: 2
+      PackageType: "Image"
+      # Layers:
+      #   - !Sub "arn:aws:lambda:${AWS::Region}:580247275435:layer:LambdaInsightsExtension:2"
+      Code:
+        ImageUri: !Sub ${DockerRepo}:api-${CommitHash}
+      Role: !GetAtt APILambdaRole.Arn
+      Environment:
+        Variables:
+          CHARGE_LAMBDA: !ImportValue T3chFlicks-ChargeLambdaName
+          REFUND_LAMBDA: !ImportValue T3chFlicks-RefundLambdaName
+          DOCUMENT_STORE_BUCKET: !ImportValue T3chFlicks-DocumentStoreBucketName
+          SQS_URL: !Ref ProcessingQueue
+          DOCUMENT_STORE_DIST_URL: !Sub
+            - document-store.${Domain} 
+            - Domain: !ImportValue T3chFlicksRootDomainName 
+
+  ProcessingLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+      MemorySize: 256
+      Timeout: 10
+      PackageType: "Image"
+      # Layers:
+      #   - !Sub "arn:aws:lambda:${AWS::Region}:580247275435:layer:LambdaInsightsExtension:2"
+      Code:
+        ImageUri: !Sub ${DockerRepo}:processing-${CommitHash}
+      Role: !GetAtt ProcessingLambdaRole.Arn
+      Environment:
+        Variables:
+          REFUND_LAMBDA: !ImportValue T3chFlicks-RefundLambdaName
+          DOCUMENT_STORE_BUCKET: !ImportValue T3chFlicks-DocumentStoreBucketName
+          DOCUMENT_STORE_DIST_URL: !Sub
+            - document-store.${Domain} 
+            - Domain: !ImportValue T3chFlicksRootDomainName 
+            
+  APILambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref APILambdaFunction
+      Action: 'lambda:InvokeFunction'
+      Principal: elasticloadbalancing.amazonaws.com
+
+  APILambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: [ 'sts:AssumeRole' ]
+            Effect: Allow
+            Principal:
+              Service: [ 'lambda.amazonaws.com' ]
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/CloudWatchLambdaInsightsExecutionRolePolicy
+      Policies:
+        - PolicyName: "ChargeAndRefundPolicy"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'lambda:invoke*'
+                Resource:
+                  - !ImportValue T3chFlicks-ChargeLambdaArn
+                  - !ImportValue T3chFlicks-RefundLambdaArn
+        - PolicyName: "ProcessingQueue"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'sqs:SendMessage'
+                Resource:
+                  - !GetAtt ProcessingQueue.Arn
+
+  ProcessingLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: [ 'sts:AssumeRole' ]
+            Effect: Allow
+            Principal:
+              Service: [ 'lambda.amazonaws.com' ]
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/CloudWatchLambdaInsightsExecutionRolePolicy
+      Policies:
+        - PolicyName: "RefundPolicy"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'lambda:invoke*'
+                Resource:
+                  - !ImportValue T3chFlicks-RefundLambdaArn
+        - PolicyName: "ProcessingQueue"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'sqs:*'
+                Resource:
+                  - !GetAtt ProcessingQueue.Arn                
+        - PolicyName: "UploadDocument"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 's3:PutObject'
+                  - 's3:PutObjectTagging'
+                Resource:
+                  - !ImportValue T3chFlicks-DocumentStoreBucketArn
+                  - !Sub 
+                    - ${BucketArn}/
+                    - BucketArn: !ImportValue T3chFlicks-DocumentStoreBucketArn
+                  - !Sub 
+                    - ${BucketArn}/*
+                    - BucketArn: !ImportValue T3chFlicks-DocumentStoreBucketArn
+
+      #  TODO: ADD Metrics correct for api as described https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-metrics-and-dimensions.html
+      #  TODO: enable endpoint monitoring https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-logging.html
+      #  TODO: add 400 and 500 alarms with emails
+      #  TODO: fail on bad url and fail on medium api bad response and non posts
+
+  HTTP4xxsAlarm:
+    Type: "AWS::CloudWatch::Alarm"
+    Properties:
+      AlarmDescription: Sum Http 400s for T3chFlicks Service API for MediumToMarkdown
+      AlarmActions:
+        - !ImportValue AlertSNSTopicArn
+      OKActions:
+        - !ImportValue AlertSNSTopicArn
+      MetricName: 4XXError
+      TreatMissingData: notBreaching
+      Namespace: AWS/ApiGateway
+      Statistic: Sum
+      Period: '60'
+      EvaluationPeriods: '1'
+      Threshold: 10
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: ApiName
+          Value: !Sub ${ProjectName}-Service-API
+        - Name: Stage
+          Value: Dev
+        - Name: Method
+          Value: POST
+        - Name: Resource
+          Value: /convert
+
+  HTTP5xxsAlarm:
+    Type: "AWS::CloudWatch::Alarm"
+    Properties:
+      AlarmDescription: Sum Http 500s for T3chFlicks Service API for MediumToMarkdown
+      AlarmActions:
+        - !ImportValue AlertSNSTopicArn
+      OKActions:
+        - !ImportValue AlertSNSTopicArn
+      MetricName: 5XXError
+      TreatMissingData: notBreaching
+      Namespace: AWS/ApiGateway
+      Statistic: Sum
+      Period: '60'
+      EvaluationPeriods: '1'
+      Threshold: 1
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: ApiName
+          Value: !Sub ${ProjectName}-Service-API
+        - Name: Stage
+          Value: Dev
+        - Name: Method
+          Value: POST
+        - Name: Resource
+          Value: /convert
+
+Outputs:
+  ApiDomain:
+    Value: !Sub
+              - ${Domain}/medium-to-markdown
+              - Domain: !ImportValue T3chFlicksAPIDomainName
+    Export:
+      Name: T3chFlicks-MediumToMarkdownApiDomain

@@ -1,0 +1,29 @@
+version: 0.2
+ 
+phases:
+  pre_build:
+    commands:
+      - cd src/tests
+      - pip install t3chflicks-service==0.34 --extra-index-url https://$PY_PI_URL
+      - pip install -r requirements.txt
+      - python -m pytest -vv 
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - DOCKER_PASS=$(aws ssm get-parameter --name "/DOCKER_PASS" --with-decryption --query "Parameter.Value" --output text)
+      - echo $DOCKER_PASS | docker login --username t3chflicks --password-stdin 
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - cd ../api
+      - docker build --build-arg PY_PI_URL=${PY_PI_URL} -t $IMAGE_REPO_NAME:api-$IMAGE_TAG .
+      - docker tag $IMAGE_REPO_NAME:api-$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:api-$IMAGE_TAG      
+      - cd ../processing
+      - docker build --build-arg PY_PI_URL=${PY_PI_URL} -t $IMAGE_REPO_NAME:processing-$IMAGE_TAG .
+      - docker tag $IMAGE_REPO_NAME:processing-$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:processing-$IMAGE_TAG      
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:api-$IMAGE_TAG
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:processing-$IMAGE_TAG

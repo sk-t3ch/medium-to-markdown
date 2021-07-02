@@ -1,0 +1,270 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  CredentialsArn:
+    Type: String
+  BranchName:
+    Type: String
+  ProjectName:
+    Type: String
+    Default: "t3chflicks-medium-to-markdown"
+    
+
+Resources:
+  CodePipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: code-pipeline
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:*
+                  - cloudwatch:*
+                  - cloudformation:*
+                  - iam:PassRole
+                  - codebuild:*
+                  - codestar-connections:*
+                Resource: "*"
+
+  DeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+                - cloudformation.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      Tags:
+        - Key: Project 
+          Value: !Ref ProjectName
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  DockerRepository: 
+    Type: AWS::ECR::Repository
+    Properties:
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+
+  Budget:
+    Type: "AWS::Budgets::Budget"
+    Properties:
+      Budget:
+        BudgetName: !Sub "Budget ${ProjectName}"
+        BudgetLimit:
+          Amount: 2
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          TagKeyValue:
+            - !Sub "user:Project$${ProjectName}"
+      NotificationsWithSubscribers:
+        - Notification:
+            NotificationType: ACTUAL
+            ComparisonOperator: GREATER_THAN
+            Threshold: 99
+          Subscribers:
+            - SubscriptionType: SNS
+              Address: !ImportValue AlertSNSTopicArn
+
+  CodePipeline:
+    DependsOn:
+      - S3Bucket
+      - CodePipelineRole
+      - DeployRole
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+      ArtifactStore:
+        Location: !Ref S3Bucket
+        Type: S3
+      RoleArn: !GetAtt CodePipelineRole.Arn
+      RestartExecutionOnUpdate: true
+      Stages:
+        - Name: "Source"
+          Actions:
+            - Name: SourceCode
+              Namespace: "SourceVariables"
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Provider: CodeStarSourceConnection
+                Version: 1
+              Configuration:
+                BranchName: !Ref BranchName
+                FullRepositoryId: !Sub "sk-t3ch/${ProjectName}"
+                ConnectionArn: !Ref CredentialsArn
+              OutputArtifacts:
+                - Name: !Ref ProjectName
+        - Name: "Deploy-Pipeline"
+          Actions:
+            - Name: "Deploy-CodePipeline"
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Sub "${ProjectName}-pipeline-${BranchName}"
+                TemplatePath: !Sub "${ProjectName}::aws/00-pipeline.yml"
+                Capabilities: "CAPABILITY_NAMED_IAM"
+                RoleArn: !GetAtt DeployRole.Arn
+                ParameterOverrides: !Sub |
+                  {
+                    "BranchName": "${BranchName}",
+                    "CredentialsArn": "${CredentialsArn}"
+                  }
+              InputArtifacts:
+                - Name: !Ref ProjectName
+        - Name: "Deploy-Service"
+          Actions:
+            - Name: "Deploy-Service-CodeBuild"
+              RunOrder: 1
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Sub "${ProjectName}-service-codebuild-${BranchName}"
+                TemplatePath: !Sub "${ProjectName}::aws/01-service-code-build.yml"
+                Capabilities: "CAPABILITY_NAMED_IAM"
+                RoleArn: !GetAtt DeployRole.Arn
+                ParameterOverrides: !Sub |
+                  {
+                    "ProjectName": "${ProjectName}",
+                    "BranchName": "${BranchName}",
+                    "ArtifactBucketArn": "${S3Bucket.Arn}",
+                    "CommitHash": "#{SourceVariables.CommitId}",
+                    "DockerRepo": "${DockerRepository}"
+                  }
+              InputArtifacts:
+                - Name: !Ref ProjectName
+        - Name: "Build-Service-Lambdas"
+          Actions:
+            - Name: "Build-Lambdas"
+              RunOrder: 1
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: 1
+              Configuration:
+                ProjectName: !Sub ${ProjectName}-${BranchName}-CodeBuildProject-Service
+              InputArtifacts:
+                - Name: !Ref ProjectName
+        - Name: "Deploy-Service-Api"
+          Actions:
+            - Name: "Deploy-ServiceApi"
+              RunOrder: 1
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Sub "${ProjectName}-service-api"
+                TemplatePath: !Sub "${ProjectName}::aws/02-service-api.yml"
+                Capabilities: "CAPABILITY_NAMED_IAM"
+                RoleArn: !GetAtt DeployRole.Arn
+                ParameterOverrides: !Sub |
+                  {
+                    "CommitHash": "#{SourceVariables.CommitId}",
+                    "ProjectName": "${ProjectName}",
+                    "DockerRepo": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${DockerRepository}"
+                  }
+              InputArtifacts:
+                - Name: !Ref ProjectName
+        - Name: "Deploy-Widgets"
+          Actions:
+            - Name: "Deploy-Infra"
+              RunOrder: 1
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Sub "${ProjectName}-widgets"
+                TemplatePath: !Sub "${ProjectName}::aws/03-widgets.yml"
+                Capabilities: "CAPABILITY_NAMED_IAM"
+                RoleArn: !GetAtt DeployRole.Arn
+                ParameterOverrides: !Sub |
+                  {
+                    "CommitHash": "#{SourceVariables.CommitId}",
+                    "ProjectName": "${ProjectName}",
+                    "BranchName": "${BranchName}"
+                  }
+              InputArtifacts:
+                - Name: !Ref ProjectName
+            - Name: "Deploy-Widgets-CodeBuild"
+              RunOrder: 2
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Sub "${ProjectName}-widgets-codebuild-${BranchName}"
+                TemplatePath: !Sub "${ProjectName}::aws/04-widgets-code-build.yml"
+                Capabilities: "CAPABILITY_NAMED_IAM"
+                RoleArn: !GetAtt DeployRole.Arn
+                ParameterOverrides: !Sub |
+                  {
+                    "ProjectName": "${ProjectName}",
+                    "BranchName": "${BranchName}",
+                    "CommitHash": "#{SourceVariables.CommitId}",
+                    "ArtifactBucketArn": "${S3Bucket.Arn}"
+                  }
+              InputArtifacts:
+                - Name: !Ref ProjectName
+            - Name: "Build-Widgets"
+              RunOrder: 3
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: 1
+              Configuration:
+                ProjectName: !Sub ${ProjectName}-${BranchName}-CodeBuildProject-Widgets
+              InputArtifacts:
+                - Name: !Ref ProjectName
+

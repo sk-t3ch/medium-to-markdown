@@ -1,0 +1,34 @@
+{
+   "$schema": "http://json-schema.org/draft-04/schema#",
+   "title": "MediumToMarkdown/Convert Output",
+   "description": "Ouput of API call to MediumToMarkdown convert endpoint",
+   "type": "object",
+   "properties": {
+      "title": {
+         "type": "string",
+         "description": "Title of article",
+         "example": "How to use Amplify Auth in Nuxt JS"
+      },
+      "date": {
+         "type": "number",
+         "description": "Unix Timestamp (milliseconds) for time of publish",
+         "example": "1609262137432"
+      },
+      "markdown": {
+         "type": "string",
+         "description": "Markdown representation of the article",
+         "example": "### Hello"
+      },
+      "size": {
+         "type": "number",
+         "description": "Size in bytes of article markdown",
+         "example": 3140
+      }
+   },
+   "required": [
+      "title",
+      "size",
+      "markdown",
+      "date"
+   ]
+}

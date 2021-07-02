@@ -1,0 +1,16 @@
+{
+   "$schema": "http://json-schema.org/draft-04/schema#",
+   "title": "MediumToMarkdown/Convert Output",
+   "description": "Ouput of API call to MediumToMarkdown convert endpoint",
+   "type": "object",
+   "properties": {
+      "location": {
+         "type": "string",
+         "description": "URI of result",
+         "example": "https://document-store.t3chflicks.org/documents/username/item"
+      }
+   },
+   "required": [
+      "location"
+   ]
+}

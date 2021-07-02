@@ -1,0 +1,23 @@
+{
+  "mediaResourceId": "36649a5848d147a53e8b63abcc0001c3",
+  "mediaResourceType": "MediaResourceExternalLink",
+  "href": "https://gist.github.com/sk-t3ch/ad5965d4a5bbc17448c0f16405fe3018",
+  "domain": "gist.github.com",
+  "title": "User Management SAM - Cognito (Part of a template and not standalone)",
+  "description": "You can't perform that action at this time. You signed in with another tab or window. You signed out in another tab or window. Reload to refresh your session. Reload to refresh your session.",
+  "iframeWidth": 0,
+  "iframeHeight": 0,
+  "iframeSrc": "",
+  "thumbnailUrl": "https://i.embed.ly/1/image?url=https%3A%2F%2Fgithub.githubassets.com%2Fimages%2Fmodules%2Fgists%2Fgist-og-image.png&key=a19fcc184b9711e1b4764040d3dc5c07",
+  "thumbnailWidth": 1280,
+  "thumbnailHeight": 640,
+  "display": 1,
+  "thumbnailImageId": "",
+  "authorName": "sk-t3ch",
+  "gist": {
+    "gistId": "ad5965d4a5bbc17448c0f16405fe3018",
+    "githubUsername": "sk-t3ch",
+    "gistScriptUrl": "https://gist.github.com/sk-t3ch/ad5965d4a5bbc17448c0f16405fe3018.js"
+  },
+  "type": "MediaResource"
+}

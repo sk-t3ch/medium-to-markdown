@@ -1,0 +1,20 @@
+{
+  "Records": [
+    {
+      "messageId": "5e6554fb-3343-401d-b4a2-9126367588ea",
+      "receiptHandle": "AQEBgWl5PousHmDEABm2NWpORYjvOqQGZetSZyDvzj/hsGLj7P/Wo2vFHPTv3CBoR9wXh9oF19erPAZEHH2e/4p4Px2hto+tKA5FcwCvErNvD4/v21p625t+UHxgg1Lux8IjZXlUvzbSden3NCLclwRrPrzuw/vvGh2iRBRZ0dZv8rSot888KADUL8FaXctJhY0mtRCvujln2omVHp+id2148GmgBw5IIDRfIJmN4BkzeccZqAvd8N9Y5FrMTaOm2YceB/dSwUTo/c+zMMUNQbvnZtu9kFFXj713BJ44qknO50Y14dNIwx1sBBHanyRRUPreTz1xcc84TXkY7fbXq0gE7IFvoXBBv3zFjXn7u3pfiI5/6DNGQVcbk4RpIakFgl/Jgm6khrhrZYNdcax3qU0U7elwPO1UklwxG3yJBpPPQ5rxO9oDCczZuEBIFZIF5r4bRSkpRWCGu3bBgAGH7MpN+g==",
+      "body": "{\"user\": {\"id\": \"Google_115762588010536765520\"}, \"url\": \"https://t3chflicks.medium.com/home-devops-pipeline-a-junior-engineers-tale-2-4-7be3e3c292c\"}",
+      "attributes": {
+        "ApproximateReceiveCount": "1",
+        "SentTimestamp": "1612906461129",
+        "SenderId": "AROAQ7BFWDYTFSJSKRKH6:t3chflicks-medium-to-markdown-se-APILambdaFunction-HM8PO4PPPIPN",
+        "ApproximateFirstReceiveTimestamp": "1612906461133"
+      },
+      "messageAttributes": {},
+      "md5OfBody": "017b52c59720a6762c686da018e8268b",
+      "eventSource": "aws:sqs",
+      "eventSourceARN": "arn:aws:sqs:eu-west-1: 066651037222:t3chflicks-medium-to-markdown-service-api-ProcessingQueue-11C3EXUYP6BD0",
+      "awsRegion": "eu-west-1"
+    }
+  ]
+}
